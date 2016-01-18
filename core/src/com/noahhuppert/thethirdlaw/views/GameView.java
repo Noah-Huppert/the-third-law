@@ -14,7 +14,13 @@ import com.noahhuppert.thethirdlaw.MainGame;
 import com.noahhuppert.thethirdlaw.helpers.Graphics;
 import com.noahhuppert.thethirdlaw.helpers.Math;
 import com.noahhuppert.thethirdlaw.helpers.Shapes;
+import com.noahhuppert.thethirdlaw.helpers.TextureCache;
 import com.noahhuppert.thethirdlaw.models.Entity;
+import com.noahhuppert.thethirdlaw.models.Player;
+import com.noahhuppert.thethirdlaw.models.Renderable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameView implements Screen {
     private static final String TAG = GameView.class.getSimpleName();
@@ -22,9 +28,10 @@ public class GameView implements Screen {
 
     private OrthographicCamera camera;
     private World world;
-    private Box2DDebugRenderer debugRenderer;
 
-    private Entity player;
+    private List<Renderable> renderables;
+
+    private Player player;
 
     public GameView(MainGame mainGame) {
         this.mainGame = mainGame;
@@ -33,9 +40,11 @@ public class GameView implements Screen {
         camera.setToOrtho(false);
 
         world = new World(new Vector2(0, 0), true);
-        debugRenderer = new Box2DDebugRenderer();
 
-        player = new Entity(Graphics.getScreenCenter(), 0, new Vector2(20, 20), new Texture("player.png"), world);
+        renderables = new ArrayList<>();
+
+        player = new Player();
+        renderables.add(player);
     }
 
     @Override
@@ -53,23 +62,23 @@ public class GameView implements Screen {
 
         world.step(1/45f, 6, 2);
 
+        // Renderable.update
+        for(Renderable r : renderables) {
+            r.update();
+        }
+
         if(Gdx.input.isTouched()) {
             Gdx.app.debug(TAG, "Fire");
         }
 
-        // Rotate player to face mouse
-        float playerRotation = MathUtils.atan2(Graphics.getScreenCenter().y - Gdx.input.getY(), Graphics.getScreenCenter().x - Gdx.input.getX());
-        playerRotation *= -1;
-        playerRotation += Math.common(1, 2);
-        player.setRotation(playerRotation);
-
         mainGame.spriteBatch.begin();
 
-        player.render(mainGame.spriteBatch);
+        // Renderable.render
+        for(Renderable r : renderables) {
+            r.render(mainGame.spriteBatch);
+        }
 
         mainGame.spriteBatch.end();
-
-        debugRenderer.render(world, camera.combined);
     }
 
     @Override
@@ -94,6 +103,9 @@ public class GameView implements Screen {
 
     @Override
     public void dispose() {
-        player.dispose();
+        // Renderable.dispose
+        for(Renderable r : renderables) {
+            r.dispose();
+        }
     }
 }

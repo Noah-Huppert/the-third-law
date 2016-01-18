@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.noahhuppert.thethirdlaw.views.GameView;
 
+import java.util.Map;
+
 public class MainGame extends Game {
     public static final boolean DEBUG = true;
     private static final String TAG = MainGame.class.getSimpleName();
@@ -16,18 +18,17 @@ public class MainGame extends Game {
 
 	public SpriteBatch spriteBatch;
 
-	private Screen screen;
-
 	@Override
 	public void create () {
+        Gdx.graphics.setTitle("The Third Law");
+
         if(DEBUG) {
             Gdx.app.setLogLevel(Application.LOG_DEBUG);
         }
 
 		spriteBatch = new SpriteBatch();
 
-		screen = new GameView(this);
-		setScreen(screen);
+		setScreen(new GameView(this));
 	}
 
     @Override

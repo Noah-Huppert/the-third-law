@@ -1,6 +1,5 @@
 package com.noahhuppert.thethirdlaw.models;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -9,7 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.noahhuppert.thethirdlaw.helpers.Shapes;
 
-public class Entity {
+public class Entity implements Renderable {
     public Sprite sprite;
     public Body body;
     public PolygonShape shape;
@@ -30,22 +29,27 @@ public class Entity {
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
-        fixtureDef.density = 0.5f;
-        fixtureDef.friction = 0.4f;
+        fixtureDef.density = 1f;
+        fixtureDef.friction = 0f;
         fixtureDef.restitution = 0.6f;
 
         fixture = body.createFixture(fixtureDef);
     }
 
-    public void render(SpriteBatch batch) {
+    @Override
+    public void update() {
         sprite.setOriginCenter();
         sprite.setPosition(getCenterPosition().x, getCenterPosition().y);
         sprite.setRotation(getRotation() * MathUtils.radiansToDegrees);
         sprite.setSize(getSize().x, getSize().y);
+    }
 
+    @Override
+    public void render(SpriteBatch batch) {
         sprite.draw(batch);
     }
 
+    @Override
     public void dispose() {
         shape.dispose();
     }
